@@ -2,7 +2,7 @@
 
 import React, { FC, Suspense, useEffect, useState, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, useAnimations, Grid } from '@react-three/drei';
+import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
 declare global {
