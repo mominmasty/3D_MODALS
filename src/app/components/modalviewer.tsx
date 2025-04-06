@@ -5,18 +5,23 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      primitive: any;
-      ambientLight: any;
-      directionalLight: any;
-      mesh: any;
-      group: any;
-      perspectiveCamera: any;
-    }
-  }
-}
+// Define proper types instead of using namespace and any
+type ThreePrimitiveProps = {
+  object: THREE.Object3D;
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: number | [number, number, number];
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+};
+
+// Define proper types for other Three.js elements
+type ThreeElementProps = {
+  intensity?: number;
+  position?: [number, number, number];
+  args?: any[];
+  color?: string | number;
+};
 
 interface ModelProps {
   filename: string;
@@ -35,44 +40,46 @@ const FallbackCube = () => {
 const Model: FC<ModelProps> = ({ filename }) => {
   const group = useRef<THREE.Group>(null);
   const modelPath = `/models/${filename}.glb`;
+  const [modelError, setModelError] = useState<Error | null>(null);
   
-  // Use a safe approach to loading the model
-  let gltf;
-  try {
-    gltf = useGLTF(modelPath);
-  } catch (error) {
-    console.error("Error loading model:", error);
-    return <FallbackCube />;
-  }
-  
-  // Extract animations if they exist
-  const { scene, animations = [] } = gltf;
-  
-  // Set up animations
+  // Always initialize hooks - they should never be conditional
+  const { scene: gltfScene, animations = [] } = useGLTF(modelPath);
   const { actions, mixer } = useAnimations(animations, group);
   
-  // Play animations when component mounts
+  // Handle errors through a state instead of early return
   useEffect(() => {
-    console.log('Model loaded successfully');
-    console.log('Available animations:', Object.keys(actions));
-    
-    // Play all animations if available
-    if (animations.length > 0) {
-      Object.values(actions).forEach(action => {
-        if (action) action.play();
-      });
+    try {
+      // Model loading check
+      if (!gltfScene) {
+        throw new Error("Failed to load model");
+      }
+      
+      console.log('Model loaded successfully');
+      console.log('Available animations:', Object.keys(actions));
+      
+      // Play all animations if available
+      if (animations.length > 0) {
+        Object.values(actions).forEach(action => {
+          if (action) action.play();
+        });
+      }
+    } catch (error) {
+      console.error("Error handling model:", error);
+      setModelError(error as Error);
     }
     
     // Cleanup on unmount
     return () => {
       if (mixer) mixer.stopAllAction();
     };
-  }, [actions, animations, mixer]);
+  }, [actions, animations, mixer, gltfScene]);
+  
+  if (modelError) return <FallbackCube />;
   
   return (
     <group ref={group}>
       <primitive 
-        object={scene} 
+        object={gltfScene} 
         scale={0.8} 
         position={[0, 0, 0]} 
         rotation={[0, 0, 0]}
@@ -129,18 +136,20 @@ const ModelViewer: FC<ModelViewerProps> = ({ filename, isOpen, onClose }) => {
   console.log('ModelViewer render:', { filename, isOpen });
   const [canvasError, setCanvasError] = useState(false);
   
-  if (!isOpen) return null;
-
-  // Reset canvas error when component re-renders
+  // Move hook before any conditional returns
   useEffect(() => {
-    setCanvasError(false);
+    if (isOpen) {
+      setCanvasError(false);
+    }
   }, [filename, isOpen]);
-
-  // Handle canvas errors
-  const handleCanvasError = (event: any) => {
+  
+  // Handle canvas errors with proper type
+  const handleCanvasError = (event: unknown) => {
     console.error('Canvas error:', event);
     setCanvasError(true);
   };
+  
+  if (!isOpen) return null;
 
   return (
     <div className="absolute inset-0">
