@@ -5,9 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Define proper types instead of using namespace and any
-
-
+// Define proper types
 interface ModelProps {
   filename: string;
 }

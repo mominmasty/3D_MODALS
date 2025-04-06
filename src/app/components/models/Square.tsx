@@ -163,14 +163,15 @@ export default function Scene({ onClose }: SquareProps) {
             window.removeEventListener('keyup', handleKeyUp);
             
             // Properly remove the canvas element
-            if (containerRef.current) {
-                const canvas = containerRef.current.querySelector('canvas');
+            const currentContainer = containerRef.current;
+            if (currentContainer) {
+                const canvas = currentContainer.querySelector('canvas');
                 if (canvas) {
                     canvas.remove();
                 }
                 // Alternative approach if needed
-                while (containerRef.current.firstChild) {
-                    containerRef.current.removeChild(containerRef.current.firstChild);
+                while (currentContainer.firstChild) {
+                    currentContainer.removeChild(currentContainer.firstChild);
                 }
             }
             
@@ -178,7 +179,7 @@ export default function Scene({ onClose }: SquareProps) {
             renderer.forceContextLoss();
             renderer.domElement.remove();
         };
-    }, []);
+    }, [color]);
 
     return (
         <div className="relative w-full h-full flex">
