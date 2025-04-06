@@ -6,22 +6,7 @@ import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Define proper types instead of using namespace and any
-type ThreePrimitiveProps = {
-  object: THREE.Object3D;
-  position?: [number, number, number];
-  rotation?: [number, number, number];
-  scale?: number | [number, number, number];
-  castShadow?: boolean;
-  receiveShadow?: boolean;
-};
 
-// Define proper types for other Three.js elements
-type ThreeElementProps = {
-  intensity?: number;
-  position?: [number, number, number];
-  args?: any[];
-  color?: string | number;
-};
 
 interface ModelProps {
   filename: string;
