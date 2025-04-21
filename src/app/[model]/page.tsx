@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Square from '../components/models/Square';
+import Earth from '../components/models/Earth';
 
 export default function ModelPage() {
   const params = useParams();
@@ -17,6 +18,8 @@ export default function ModelPage() {
       // Check if the model exists
       if (modelParam.toLowerCase() === 'square') {
         setModelName('Square');
+      } else if (modelParam.toLowerCase() === 'earth') {
+        setModelName('Earth');
       } else {
         // Redirect to home if model doesn't exist
         router.push('/');
@@ -34,8 +37,8 @@ export default function ModelPage() {
     
     // Map model names to components
     const componentMap: Record<string, React.ReactNode> = {
-      'Square': <Square onClose={handleCloseModel} />
-      // Add more components as needed
+      'Square': <Square onClose={handleCloseModel} />,
+      'Earth': <Earth onClose={handleCloseModel} />
     };
     
     return componentMap[modelName] || null;

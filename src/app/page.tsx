@@ -9,7 +9,10 @@ const models = [
     title: 'Square',
     filename: 'Square'
   },
-  // Add more models here as needed
+  {
+    title: 'Earth',
+    filename: 'Earth'
+  },
 ];
 
 const Home: FC = () => {

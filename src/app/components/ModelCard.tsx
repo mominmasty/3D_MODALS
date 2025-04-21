@@ -13,7 +13,6 @@ const ModelCard: FC<ModelCardProps> = ({ title, filename }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    // Navigate to the model-specific route
     router.push(`/${filename.toLowerCase()}`);
   };
 
@@ -26,11 +25,19 @@ const ModelCard: FC<ModelCardProps> = ({ title, filename }) => {
       <div className="relative w-full h-48 mb-4">
         <div className="absolute inset-0 bg-black rounded-md cursor-pointer">
           <div className="absolute inset-0 flex items-center justify-center">
-            <ModelViewer
-              filename={filename}
-              isOpen={true}
-              onClose={() => {}}
-            />
+            {filename === 'Earth' ? (
+              <img 
+                src="/image.png" 
+                alt="Earth Preview" 
+                className="w-full h-full object-cover rounded-md"
+              />  
+            ) : (
+              <ModelViewer
+                filename={filename}
+                isOpen={true}
+                onClose={() => {}}
+              />
+            )}
           </div>
         </div>
       </div>
